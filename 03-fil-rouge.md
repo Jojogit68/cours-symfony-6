@@ -6,7 +6,10 @@ départ pour commencer avec Symfony.
 
 Si tu n'as pas d'idée de produit, je te proposes de créer un site
 dédié à la vente et achat pour les collectionneurs de 
-[canards (vivants)](https://www.youtube.com/watch?v=-w0qTvjydik).
+[canards](https://www.youtube.com/watch?v=-w0qTvjydik) en plastique.
+Pourquoi des canards en plastique ? Car en informatique il y a une méthode qui 
+a fait ses preuves, qui se nomme la ["Méthode du canard en plastique"](https://fr.wikipedia.org/wiki/M%C3%A9thode_du_canard_en_plastique)
+et qui consiste à expliquer ses problèmes informatique à... un canard.
 
 ## Fonctionnalités:
 - Création d'annonces, avec photo, prix, description ;
@@ -25,7 +28,7 @@ n'hésites pas à la suivre.
 
 - Depuis ton terminal, rends-toi dans ton environnement de développement
     (ou clic droit dans un dossier _git bash here_ pour git bash), 
-    (par exemple dans le dossier dossier __www__ de __Wamp__), et tapez :  
+    (par exemple dans le dossier __www__ de __Wamp__ ou de __Laragon__), et tapez :  
     ``` console
     symfony new le_nom_de_votre_projet --webapp
     # ou
@@ -39,15 +42,18 @@ n'hésites pas à la suivre.
 ```cd le_nom_de_votre_projet```
 - Ouvre le dossier contenant les fichiers de Symfony dans ton éditeur préféré. Pour VS Code, il suffira de taper ```code ./``` dans un terminal. 
 
-- Lance le serveur de développement :  
-    ``` console
-    symfony server:start
-    # résultat
-    [OK] Web server listening on https://127.0.0.1:8000 (PHP FPM 7.3.16)
-    ```  
-    Laisse ce terminal de côté. Si tu le fermes, le serveur s'arrêtera ! Pour arrêter le serveur, appuye sur ```ctrl+c``` depuis ce terminal.
-
-- Tapez cette url depuis votre navigateur préféré:
+  - Lance le serveur de développement :  
+      ``` console
+      symfony server:start
+      # résultat
+      [OK] Web server listening on https://127.0.0.1:8000 (PHP FPM 7.3.16)
+      ```  
+      Laisse ce terminal de côté. Si tu le fermes, le serveur s'arrêtera ! Pour arrêter le serveur, appuie sur ```ctrl+c``` depuis ce terminal.  
+      Cette commande permet de lancer le [serveur interne de PHP](https://www.php.net/manual/fr/features.commandline.webserver.php). 
+      Celui-ci va interpréter les fichiers PHP et agir comme un petit serveur web.
+      À utiliser __seulement__ pour développer en local !  
+      __Wamp__, __Laragon__ et consorts ne nous seront utiles que pour le serveur de base de donnée. 
+- Tape cette url depuis votre navigateur préféré:
 [http://127.0.0.1:8000](http://127.0.0.1:8000). Tu devrais voir quelque chose comme __Welcome to Symfony [version]__. Si c'est le cas :   
 !['Well done Padawan'](https://media.giphy.com/media/9g8PH1MbwTy4o/giphy.gif)
 ## Structure des dossiers
@@ -72,9 +78,9 @@ il contiendra tous les fichiers accessibles aux visiteurs
 
 Tu peux noter qu'un fichier ```composer.json``` a été créé à la racine
 du projet. Celui-ci décrit entre autres les bibliothèques à installer pour le projet grâce à _Composer_.
-À chaque fois que tu va installer une nouvelle bibliothèque, une ligne y sera ajoutée.
+À chaque fois que tu vas installer une nouvelle bibliothèque, une ligne y sera ajoutée.
 
 Ce fichier, ainsi que les fichiers ```composer.lock``` et ```symfony.lock``` permettront aux
 autres développeurs·euses participant au projet d'installer les mêmes librairies. Nous y reviendrons.
 
-N'hésite pas à jeter un oeil et en apprendre plus sur [_Composer_](https://www.grafikart.fr/tutoriels/composer-480)
+N'hésite pas à jeter un œil et en apprendre plus sur [_Composer_](https://www.grafikart.fr/tutoriels/composer-480)
