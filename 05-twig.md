@@ -1,7 +1,7 @@
 # Twig
 > Les documentations seront tes meilleures amies si tu souhaites progresser. Il faut essayer de les comprendre et ne pas en avoir peur !
 > Je t'invite donc pas à prendre à chaque fois un moment pour lire les liens qui sont proposés dans le cours.
-> (à commencer par [RTFM](https://fr.wikipedia.org/wiki/RTFM_%28expression%29), qui est une expression que tu entendra sûrement un jour si tu ne lis pas les documentations).  
+> (à commencer par [RTFM](https://fr.wikipedia.org/wiki/RTFM_%28expression%29), qui est une expression que tu entendras sûrement un jour si tu ne lis pas les documentations).  
 
 [Twig](https://twig.symfony.com/) est un moteur de template PHP, à l'instar de Smarty, Blade, etc...
 
@@ -60,7 +60,7 @@ Comparaison d'un template PHP et Twig
 ```
 
 ## Twig / VS Code / Emmet
-Pour utiliser Emmet depuis des templates Twig dans VS Code, tu peux suivre [cette documentation](https://code.visualstudio.com/docs/editor/emmet). Pour changer les paramètres de VS Code, tu peux appuyer sur F1 (dans VS code hein) et taper ```Paramètres``` puis cliquer sur la proposition __Afficher les paramètres (en JSON)__. Un ```.json``` s'ouvre. Voici les paramètres à ajouter:
+Pour utiliser Emmet depuis des templates Twig dans VS Code, tu peux suivre [cette documentation](https://code.visualstudio.com/docs/editor/emmet). Pour changer les paramètres de VS Code, tu peux appuyer sur F1 (dans VS code hein) et taper ```Paramètres``` puis cliquer sur la proposition __Afficher les paramètres (en JSON)__. Un ```.json``` s'ouvre. Voici les paramètres à ajouter :
 
 ``` json
 "emmet.syntaxProfiles": {
@@ -92,9 +92,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/")
-     */
+    #[Route('/')]
     public function index()
     {
         return $this->render('home/index.html.twig', [
@@ -105,22 +103,22 @@ class HomeController extends AbstractController
 ```
 
 Pour afficher une variable :  
-```{{ ... }}``` : "Dit quelque chose": imprime une variable ou le résultat d'une expression au template.   
+```{{ ... }}``` : "Dit quelque chose" : imprime une variable ou le résultat d'une expression au template.   
 
 Tu peux tout effacer dans __home/index.html.twig__ et simplement écrire :
 ``` twig
 <h1>{{ title }}</h1>
 ```
-Va voir sur [http://127.0.0.1:8000/](http://127.0.0.1:8000/), il devrait y être affiché Bienvenue sur Duckzon.
+Vas voir sur [http://127.0.0.1:8000/](http://127.0.0.1:8000/), il devrait y être affiché Bienvenue sur Duckzon.
 
 ### Un peu d'explications
 - Par défaut, Symfony ira chercher les templates dans le dossier ```templates```;
 - la fonction render prend en paramètre le chemin vers le gabarit et un tableau de paramètres ;
 - les paramètres sont disponibles dans le gabarit ;
-- les extension avant le ```.twig``` (```nom_du_fichier.html.twig```) permettent de savoir quel type de fichier est envoyé. En effet, pourquoi se contenter du format HTML ? Par exemple, si l'on a besoin de manipuler un fichier XML - disons un flux RSS -, nous pouvons tout à fait utiliser Twig pour cela, et nous nommerons le fichier flux.rss.twig, par exemple.
+- les extensions avant le ```.twig``` (```nom_du_fichier.html.twig```) permettent de savoir quel type de fichier est envoyé. En effet, pourquoi se contenter du format HTML ? Par exemple, si l'on a besoin de manipuler un fichier XML - disons un flux RSS -, nous pouvons tout à fait utiliser Twig pour cela, et nous nommerons le fichier flux.rss.twig, par exemple.
 
 ### Exercice
-- Dans la méthode index, envoie une deuxième variable ```content``` au template , qui a la valeur ```Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem quam cum corrupti modi cupiditate nostrum odit illo veniam, nulla neque officia expedita rerum, aliquid libero incidunt rem iusto reprehenderit maxime!``` ;
+- Dans la méthode index, envoie une deuxième variable ```content``` au template, qui a la valeur ```Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem quam cum corrupti modi cupiditate nostrum odit illo veniam, nulla neque officia expedita rerum, aliquid libero incidunt rem iusto reprehenderit maxime!``` ;
 - affiche cette variable dans le template. 
 
 ---
@@ -142,9 +140,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/")
-     */
+    #[Route('/')]
     public function index()
     {
         return $this->render('home/index.html.twig', [
@@ -170,7 +166,7 @@ Une [fonction](https://twig.symfony.com/doc/2.x/functions/index.html) quant à e
 #### Exercice
 - en te référant à la doc, essaye de mettre la variable ```title``` en majuscules.
 - dans la méthode ```index``` du contrôleur, envoies une variable ```'date' => new \DateTime()``` et essaies de l'afficher au format ```d-m-Y```;
-- dans le template, fait un dump de la variable ```date```.
+- dans le template, fait un _dump_ de la variable ```date```.
 ---
 ---
 ---
@@ -187,7 +183,7 @@ Une [fonction](https://twig.symfony.com/doc/2.x/functions/index.html) quant à e
 Quand tu crées la structure de ton site, tu es confronté·e à la problématique suivante :
 > J'ai un design (sidebar, menu, etc...) mais je n'ai aucune envie d'avoir à recopier le code de mes éléments sur chaque page !
 
-Pour pallier à ce problème, tu peux faire hériter des template, d'autre templates.
+Pour pallier ce problème, tu peux faire hériter des template, d'autre templates.
 
 ### base.html.twig
 
@@ -219,7 +215,7 @@ Base va être le template de _base_ de l'application. Tous les autres templates 
 
 > Tu peux aussi constater l'apparition de la DebugBar ! (tout en bas)
 
-maintenant, ajoute 
+Maintenant, ajoute 
 ``` twig
 {% block body %}
     Hello Home !
@@ -229,7 +225,7 @@ maintenant, ajoute
 Et affiche la page [http://127.0.0.1:8000](http://127.0.0.1:8000).
 Tu devrais voir afficher __Hello Home !__
 
-maintenant, ajoute 
+Maintenant, ajoute 
 ``` twig
 {% block body %}
     {{ parent() }}
@@ -262,82 +258,87 @@ Dans ```templates/home/index.html.twig```:
 Dans le ```<head>``` de ```templates/base.html.twig```, ajoute ceci :
 ``` twig
 {% block stylesheets %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 {% endblock %}
 ```
 Et juste avant la fermeture du ```<body>```:
 ``` twig
 {% block javascripts %}
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 {% endblock %}
 ```
 ## Autres éléments
 ### Ajouter du CSS et du JS
-Si tu veux ajouter tes propre CSS et JS, tu peux rester simple et ajouter ces lignes : 
+Si tu veux ajouter tes propres CSS et JS, tu peux rester simple et ajouter ces lignes : 
 ``` html
 <link href="{{ asset('css/main.css') }}" rel="stylesheet" />
 <script src="{{ asset('js/main.js') }}"></script>
 ```
-Et mettre les différents fichiers dans le dossiers ```public```.
+Et mettre les différents fichiers dans le dossier ```public```.
 
-Pour compliquer, mais aussi dans l'éventualité où tu as besoin d'utiliser les dernières avancées en matière de dev front, tu peux générer tes assets avec Webpack (compilation, minification, interprétation, etc...): [https://symfony.com/doc/master/frontend.html](https://symfony.com/doc/master/frontend.html)
-
+Pour compliquer, mais aussi dans l'éventualité où tu as besoin d'utiliser les dernières avancées en matière de dev front, tu peux générer tes assets avec Webpack (compilation, minification, interprétation, etc...): [https://symfony.com/doc/master/frontend.html](https://symfony.com/doc/master/frontend.html).  
+On reparle plus tard.
 
 ### Inclusion
 Tu as la possibité d'inclure des templates dans d'autres templates :
 ```{{ include ('_inc_/nac.html.twig') }}```
 [L'inclusion](https://twig.symfony.com/doc/3.x/tags/include.html) est utile lorsque tu as des éléments qui ont une structure identique mais qui doivent intervenir de façon ponctuelle dans les pages et sont voués à être répétés.
 
-Pour inclure une navigation, voici comment tu peux faire:
+Pour inclure une navigation, voici comment tu peux faire :
 ``` twig
 {# templates/_inc/nav.html.twig #}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-	<a class="navbar-brand" href="#">Duckzon</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Duckzon !</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Annonce</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Login</a></li>
+                            <li><a class="dropdown-item" href="#">logout</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Register</a></li>
+                        </ul>
+                    </li>
+                </ul>
 
-	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
-				<a class="nav-link" href="#">Home
-					<span class="sr-only">(current)</span>
-				</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Annonces</a>
-			</li>
-			
-		</ul>
-		<ul class="navbar-nav">
-			<li class="nav-item dropdown">
-				<a class="dropdown-toggle btn btn-info" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Mon profil
-				</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<a class="dropdown-item" href="#">Logout</a>
-					<a class="dropdown-item" href="#">Login</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#">Register</a>
-				</div>
-			</li>
-		</ul>
-	</div>
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
 </nav>
 ```
 ``` twig
 {# templates/base.html/twig #}
-{{ include ('_inc/nav.html.twig') }}
+{# reste du fichier... #}
+<body>
+    {{ include ('_inc/nav.html.twig') }}
+    {% block body %}{% endblock %}
+</body>
 ```
 
-### Exexuter une méthode de Controller
+### Executer une méthode de Controller
 Dans un template, tu peux appeler une méthode de controller. Par exemple : 
 ``` twig
 {{ render(controller("App\\Controller\\AnnonceController:list", {'page':1})) }}
 ```
-C'est utile si tu n'as pas les variable nécessaires à nos templates.
+C'est utile si tu n'as pas les variables nécessaires à nos templates.
 
 Pour en savoir plus : https://symfony.com/doc/current/reference/twig_reference.html#render
 
@@ -387,8 +388,8 @@ Et modifie __templates/home/index.html.twig__
 ```
 
 ### Exercice
-- Crée un nouveau layout ```templates/_layout/sidebar.html.twig``` qui intégrera une sidebar à gauche avec un menu spécial en plus du menu de navigation;
-- fais hériter ```templates/home/index.html.twig``` de ce layout
+- Crée un nouveau layout ```templates/_layout/sidebar.html.twig``` qui intégrera une sidebar à gauche avec un menu spécial en plus du menu de navigation ;
+- fais hériter ```templates/annonce/index.html.twig``` de ce layout
 - fais hériter le nouveau layout de ```templates/base.html.twig``` juste pour tester que cela fonctionne. On utilisera ce layout plus tard pour l'administration du site.
 
 ---
@@ -401,7 +402,7 @@ Et modifie __templates/home/index.html.twig__
 
 #### Correction
 ``` twig
-{# tamplates/_layout/sidebar.html.twig #}
+{# templates/_layout/sidebar.html.twig #}
 {% extends "base.html.twig" %}
 
 {% block body %}
@@ -431,8 +432,10 @@ Et modifie __templates/home/index.html.twig__
 ```
 
 ``` twig
-{# templates/home/index.html.twig #}
+{# templates/annonce/index.html.twig #}
 {% extends '_layout/sidebar.html.twig' %}
+
+{% block title %}Les annonces - DuckZon !{% endblock %}
 
 {% block content %}
 
@@ -473,10 +476,12 @@ public function index()
 ```
 Et l'utiliser dans __templates/_inc/nav.html.twig__ :
 ``` twig
-<a 
-    class="p-2 text-dark{% if current_menu is defined and current_menu == 'app_annonce_index' %} active{% endif %}" 
-    href="{{ path('app_annonce_index') }}"
->
-    Annonces
-</a>
+{# pour le lien vers annonce #}
+<li class="nav-item">
+    <a
+        class="nav-link {% if current_menu is defined and current_menu == 'app_annonce_index' %} active{% endif %}"
+        {% if current_menu is defined and current_menu == 'app_annonce_index' %} aria-current="page" {% endif %}
+        href="{{ path('app_annonce_index') }}">Annonce
+    </a>
+</li>
 ```
