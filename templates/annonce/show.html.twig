@@ -1,0 +1,47 @@
+{% extends '_layout/full-width.html.twig' %}
+
+{% block title %}#{{ annonce.id }}-{{ annonce.title }}!{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <img class="img-fluid" src="https://via.placeholder.com/800?text=Plastic Duck {{ annonce.id }}">
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">{{ annonce.title }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="h1 card-title pricing-card-title">
+                            {{ annonce.price }} €
+                        </p>
+
+                        <p>
+                            {% if annonce.status == constant('App\\Entity\\Annonce::STATUS_VERY_BAD') %}
+                                <span class="badge bg-danger">État très mauvais</span>
+                            {% elseif annonce.status == constant('App\\Entity\\Annonce::STATUS_BAD') %}
+                                <span class="badge bg-warning">Mauvais état</span>
+                            {% elseif annonce.status == constant('App\\Entity\\Annonce::STATUS_GOOD') %}
+                                <span class="badge bg-primary">Bon état</span>
+                            {% elseif annonce.status == constant('App\\Entity\\Annonce::STATUS_VERY_GOOD') %}
+                                <span class="badge bg-info">Très bon état</span>
+                            {% elseif annonce.status == constant('App\\Entity\\Annonce::STATUS_PERFECT') %}
+                                <span class="badge bg-success">Parfait état</span>
+                            {% endif %}
+                        </p>
+                        <button class="btn btn-lg btn-block btn-outline-primary" type="button">Contacter le vendeur</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h2>Déscription</h2>
+                <p>{{ annonce.description }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

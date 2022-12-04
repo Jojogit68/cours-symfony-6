@@ -3,5 +3,21 @@
 {% block title %}Bienvenue sur DuckZon !{% endblock %}
 
 {% block content %}
-    <h1> Le contenu de ma home ! </h1>
+    <div class="container">
+        <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+            <h1 class="display-4">SmallAds</h1>
+            <p class="lead">Vends toutes tes affaires !</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Les dernières annonces</h2>
+        <div class="row">
+            {% for key, annonce in annonces %}
+            <div class="col-md-4">
+                {{ include('annonce/_card.html.twig', {annonces: annonces, key: key}) }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

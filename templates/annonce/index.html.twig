@@ -1,5 +1,14 @@
 {% extends '_layout/sidebar.html.twig' %}
 {% block title %}Les annonces - DuckZon !{% endblock %}
 {% block content %}
-
+    <div class="container">
+        <h1>Liste des annonces</h1>
+        <div class="row">
+            {% for key, annonce in annonces %}
+            <div class="col-md-4">
+                {{ include('annonce/_card.html.twig', {annonces: annonces, key: key}) }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
