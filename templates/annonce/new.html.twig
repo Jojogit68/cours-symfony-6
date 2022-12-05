@@ -1,0 +1,8 @@
+{% extends "_layout/sidebar.html.twig" %}
+{% block title %}Nouvelle annonce!{% endblock %}
+{% block content %}
+    <h1>Nouvelle annonce</h1>
+    {{ include("annonce/_form.html.twig", {form: formView, button: 'create'|trans}) }}
+{% endblock %}
+
+

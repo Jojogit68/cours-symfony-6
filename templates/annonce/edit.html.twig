@@ -1,0 +1,6 @@
+{% extends "_layout/sidebar.html.twig" %}
+{% block title %}Éditer l'annonce!{% endblock %}
+{% block content %}
+    <h1>Éditer l'annonce</h1>
+    {{ include("annonce/_form.html.twig", {form: formView, button: 'edit'|trans}) }}
+{% endblock %}

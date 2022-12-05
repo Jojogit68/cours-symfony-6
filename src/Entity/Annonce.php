@@ -20,7 +20,14 @@ class Annonce
     public function prePersist()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
         $this->slug = (new Slugify())->slugify($this->title);
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     #[ORM\Id]
@@ -48,6 +55,11 @@ class Annonce
 
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
+
+    #[ORM\Column(options: [
+        'default' => 'CURRENT_TIMESTAMP'
+    ])]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -147,6 +159,18 @@ class Annonce
     {
         $slugify = new Slugify();
         $this->slug = $slugify->slugify($slug);
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

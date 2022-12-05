@@ -1,0 +1,16 @@
+title: Titre
+description: Description
+price: Prix
+status:
+    word: Êtat
+    very_bad: Très mauvais
+    bad: Mauvais
+    good: Bon
+    very_good: Très bon
+    perfect: Parfait
+sold: Vendu
+created_at: Créé le
+slug: URL SEO
+create: Créer
+save: Sauvegarder
+edit: Éditer

@@ -1,0 +1,35 @@
+{% extends '_layout/sidebar.html.twig' %}
+{% block title %}Gérer les annonces!{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Gérer les annonces</h1>
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for annonce in annonces %}
+                    <tr>
+                        <td>{{ annonce.title }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ path('app_annonce_show', {id: annonce.id, slug: annonce.slug}) }}" class="btn btn-outline-secondary">Voir</a>
+                                <a href="{{ path('app_annonce_edit', {id: annonce.id}) }}" class="btn btn-outline-secondary">Éditer</a>
+                                <form method="post" action="{{ path('app_annonce_delete', {id: annonce.id}) }}" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">
+                                    <button class="btn btn-outline-danger">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

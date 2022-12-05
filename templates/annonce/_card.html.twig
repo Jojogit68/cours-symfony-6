@@ -6,7 +6,12 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
                 <a class="btn btn-sm btn-outline-secondary" type="button" href="{{ path('app_annonce_show', {id: annonce.id, slug: annonce.slug}) }}">View</a>
-                <a class="btn btn-sm btn-outline-secondary" type="button">Edit</a>
+                <a class="btn btn-sm btn-outline-secondary" type="button" href="{{ path('app_annonce_edit', {id: annonce.id}) }}">Edit</a>
+                <form method="post" action="{{ path('app_annonce_delete', {id: annonce.id}) }}" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">
+                    <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+                </form>
             </div>
             <small class="text-muted">{{ annonce.price }}€</small>
         </div>
