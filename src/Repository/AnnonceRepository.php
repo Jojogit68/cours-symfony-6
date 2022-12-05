@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Annonce;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -71,6 +72,13 @@ class AnnonceRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.isSold = false')
+        ;
+    }
+
+    public function findAllNotSoldQuery(): Query
+    {
+        return $this->findNotSoldQuery()
+            ->getQuery()
         ;
     }
 

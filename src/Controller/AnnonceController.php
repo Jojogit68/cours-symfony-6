@@ -7,6 +7,7 @@ use App\Form\AnnonceType;
 use App\Repository\AnnonceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,9 +17,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnnonceController extends AbstractController
 {
     #[Route('/annonce', methods: ['GET'])]
-    public function index(AnnonceRepository $annonceRepository): Response
+    public function index(AnnonceRepository $annonceRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $annonces = $annonceRepository->findAllNotSold();
+        $annonces = $paginator->paginate(
+            $annonceRepository->findAllNotSoldQuery(),
+            $request->query->getInt('page', 1),
+            12
+        );
 
         return $this->render('annonce/index.html.twig', [
             'current_menu' => 'app_annonce_index',
