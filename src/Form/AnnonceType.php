@@ -34,6 +34,7 @@ class AnnonceType extends AbstractType
                 'input'  => 'datetime_immutable'
             ])
             ->add('slug', null, ['label' => 'slug'])
+            ->add('imageUrl', null, ['label' => 'image'])
         ;
     }
 

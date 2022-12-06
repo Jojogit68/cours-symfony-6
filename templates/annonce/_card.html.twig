@@ -1,5 +1,14 @@
 <div class="card mb-4 shadow-sm" height="225" width="100%">
-    <img src="https://via.placeholder.com/400?text=Plastic Duck {{ key }}" class="card-img-top" alt="Plastic Duck {{ key }}">
+    <img
+        class="img-fluid card-img-top"
+        alt="Plastic Duck {{ key }}"
+        src="
+            {% if annonce.imageUrl is not null %}
+                {{ annonce.imageUrl }}
+            {% else %}
+                https://via.placeholder.com/400?text=Plastic Duck {{ key }}
+            {% endif %}"
+    >
     <div class="card-body">
         <h5 class="card-title">{{ annonce.title }}</h5>
         <p class="card-text">{{ annonce.description }}</p>

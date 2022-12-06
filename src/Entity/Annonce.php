@@ -6,8 +6,11 @@ use App\Repository\AnnonceRepository;
 use Cocur\Slugify\Slugify;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AnnonceRepository::class), ORM\HasLifecycleCallbacks]
+#[UniqueEntity('slug')]
 class Annonce
 {
     const STATUS_VERY_BAD  = 0;
@@ -36,30 +39,52 @@ class Annonce
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 10)]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        min: 40,
+        max: 500,
+        minMessage: "La description doit faire plus de {{ limit }} caractères",
+        maxMessage: "La description doit faire moins de {{ limit }} caractères",
+    )]
     private ?string $description = null;
 
     #[ORM\Column]
     private ?int $price = null;
 
     #[ORM\Column]
+    #[Assert\Choice(choices: [
+        self::STATUS_VERY_BAD,
+        self::STATUS_BAD,
+        self::STATUS_GOOD,
+        self::STATUS_VERY_GOOD,
+        self::STATUS_PERFECT
+    ])]
     private ?int $status = null;
 
     #[ORM\Column(options: ['default' => false])]
+    #[Assert\Type('bool')]
     private ?bool $isSold = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Regex('/[a-z0-9\-]*/')]
     private ?string $slug = null;
 
     #[ORM\Column(options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(
+        protocols: ['https'],
+    )]
+    private ?string $imageUrl = null;
 
     public function getId(): ?int
     {
@@ -171,6 +196,18 @@ class Annonce
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }
