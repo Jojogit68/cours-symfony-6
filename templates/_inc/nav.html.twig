@@ -25,13 +25,22 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
+                            Account
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Login</a></li>
-                            <li><a class="dropdown-item" href="#">logout</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Register</a></li>
+                            {% if app.user %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('app_login') }}">Login</a>
+                                </li>
+                                <li class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('app_register') }}">Register</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>
