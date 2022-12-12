@@ -8,9 +8,17 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AnnonceType extends AbstractType
 {
+    private AuthorizationCheckerInterface $authorizationChecker;
+
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -28,14 +36,19 @@ class AnnonceType extends AbstractType
                 ]
             ])
             ->add('isSold', null, ['label' => 'sold'])
-            ->add('createdAt', DateType::class, [
-                'label' => 'created_at',
-                'widget' => 'single_text',
-                'input'  => 'datetime_immutable'
-            ])
-            ->add('slug', null, ['label' => 'slug'])
             ->add('imageUrl', null, ['label' => 'image'])
         ;
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $builder
+                ->add('createdAt', DateType::class, [
+                    'label' => 'created_at',
+                    'widget' => 'single_text',
+                    'input'  => 'datetime_immutable'
+                ])
+                ->add('slug', null, ['label' => 'slug'])
+            ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

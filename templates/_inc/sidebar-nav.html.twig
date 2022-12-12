@@ -1,7 +1,7 @@
 <ul class="nav flex-column">
     <li class="nav-item">
-        <a href="" class="nav-link">
-            Lien 1
-        </a>
+        {% if is_granted('ROLE_USER') %}
+            <a href="{{ path('app_annonce_new') }}" class="nav-link">Créer une annonce</a>
+        {% endif %}
     </li>
 </ul>

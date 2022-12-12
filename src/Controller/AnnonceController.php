@@ -8,6 +8,8 @@ use App\Repository\AnnonceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +34,7 @@ class AnnonceController extends AbstractController
     }
 
     #[Route('/annonce/new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(ManagerRegistry $doctrine, Request $request): Response
     {
         $annonce = new Annonce();
@@ -48,7 +51,7 @@ class AnnonceController extends AbstractController
 
         return $this->render('annonce/new.html.twig', [
             'annonce' => $annonce,
-            'form' => $form->createView()
+            'formView' => $form->createView()
         ]);
     }
 
@@ -61,6 +64,7 @@ class AnnonceController extends AbstractController
     }
 
     #[Route('/annonce/{id}/edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Security("is_granted('ROLE_USER') and annonce.getUser() == user")]
     public function edit(Annonce $annonce, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(AnnonceType::class, $annonce);
@@ -80,6 +84,7 @@ class AnnonceController extends AbstractController
     }
 
     #[Route('/annonce/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    #[Security("is_granted('ROLE_USER') and annonce.getUser() == user")]
     public function delete(Annonce $annonce, EntityManagerInterface $em, Request $request): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete' . $annonce->getId(), $request->get('_token'))) {

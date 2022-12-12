@@ -1,0 +1,38 @@
+{% extends '_layout/sidebar.html.twig' %}
+
+{% block title %}Hello {{ app.user.getFirstName }}!{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for annonce in annonces %}
+                    <tr>
+                        <td>
+                            {{ annonce.title }}
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-secondary">Éditer</a>
+                            <form method="post" action="#" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
+                                <input name="_method" type="hidden" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">
+                                <button class="btn btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
