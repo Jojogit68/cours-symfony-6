@@ -22,7 +22,7 @@
                             {{ annonce.title }}
                         </td>
                         <td>
-                            <a href="#" class="btn btn-secondary">Éditer</a>
+                            <a href="{{ path('app_annonce_edit', {id: annonce.id}) }}" class="btn btn-secondary">Éditer</a>
                             <form method="post" action="#" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
                                 <input name="_method" type="hidden" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">

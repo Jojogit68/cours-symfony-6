@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Annonce;
+use App\Entity\Tag;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -37,6 +39,11 @@ class AnnonceType extends AbstractType
             ])
             ->add('isSold', null, ['label' => 'sold'])
             ->add('imageUrl', null, ['label' => 'image'])
+            ->add('tags', EntityType::class, [
+                'class' => Tag::class,
+                'choice_label' => 'name',
+                'multiple' => true
+            ])
         ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

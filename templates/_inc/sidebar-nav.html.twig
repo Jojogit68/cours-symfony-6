@@ -1,7 +1,13 @@
 <ul class="nav flex-column">
-    <li class="nav-item">
-        {% if is_granted('ROLE_USER') %}
+    {% if is_granted('ROLE_USER') %}
+        <li class="nav-item">
             <a href="{{ path('app_annonce_new') }}" class="nav-link">Créer une annonce</a>
-        {% endif %}
-    </li>
+        </li>
+    {% endif %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <li class="nav-item">
+            <a href="{{ path('app_tag_new') }}" class="nav-link">Créer un tag</a>
+        </li>
+    {% endif %}
 </ul>
