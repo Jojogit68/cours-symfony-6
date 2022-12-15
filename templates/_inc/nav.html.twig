@@ -21,7 +21,7 @@
                     </a>
                 </li>
             </ul>
-            <form class="d-flex">
+            <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -44,10 +44,15 @@
                         </ul>
                     </li>
                 </ul>
-
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#search" aria-expanded="false" aria-controls="search">
+                    Recherche avancée
+                </button>
+            </div>
         </div>
     </div>
 </nav>
+<div class="collapse" id="search">
+    <div class="card card-body">
+        {{ render_esi(controller('App\\Controller\\AnnonceSearchController::index')) }}
+    </div>
+</div>
