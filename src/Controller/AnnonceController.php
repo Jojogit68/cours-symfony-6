@@ -64,7 +64,7 @@ class AnnonceController extends AbstractController
     }
 
     #[Route('/annonce/{id}/edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    #[Security("is_granted('ROLE_USER') and annonce.getUser() == user")]
+    #[Security("is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and annonce.getUser() == user)")]
     public function edit(Annonce $annonce, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(AnnonceType::class, $annonce);
@@ -84,7 +84,7 @@ class AnnonceController extends AbstractController
     }
 
     #[Route('/annonce/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
-    #[Security("is_granted('ROLE_USER') and annonce.getUser() == user")]
+    #[Security("is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and annonce.getUser() == user)")]
     public function delete(Annonce $annonce, EntityManagerInterface $em, Request $request): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete' . $annonce->getId(), $request->get('_token'))) {
