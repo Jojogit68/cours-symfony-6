@@ -44,6 +44,12 @@ class AnnonceType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true
             ])
+            ->add('address', null, ['label' => 'address', 'mapped' => false])
+            ->add('street', null, ['label' => 'street'])
+            ->add('postcode', null, ['label' => 'postcode'])
+            ->add('city', null, ['label' => 'city'])
+            ->add('lat')
+            ->add('lng')
         ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

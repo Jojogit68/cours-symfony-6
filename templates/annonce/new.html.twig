@@ -5,4 +5,7 @@
     {{ include("annonce/_form.html.twig", {form: formView, button: 'create'|trans}) }}
 {% endblock %}
 
-
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('formAnnonce') }}
+{% endblock %}
