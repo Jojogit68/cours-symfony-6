@@ -43,6 +43,7 @@ class AnnonceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $doctrine->getManager();
+            $annonce->setUser($this->getUser());
             $em->persist($annonce);
             $em->flush();
             $this->addFlash('success', 'Annonce créée avec succès');
