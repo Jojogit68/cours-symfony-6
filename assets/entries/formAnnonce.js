@@ -1,4 +1,4 @@
-import autoCompleteAddress from "./js/autoCompleteAddress"
+import autoCompleteAddress from "../js/autoCompleteAddress"
 
 autoCompleteAddress('#annonce_address', address => {
     document.querySelector('#annonce_street').value = address.properties.name

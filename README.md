@@ -4,11 +4,11 @@
 > Je t'invite donc pas à prendre à chaque fois un moment pour lire les liens qui sont proposés dans le cours.
 > (à commencer par [RTFM](https://fr.wikipedia.org/wiki/RTFM_%28expression%29), qui est une expression que tu entendras sûrement un jour si tu ne lis pas les documentations).
 
-Dans ce chapitre, nous allons voir comment ajouter une carte sur le site, permettant de localiser les annonces. Pour localiser des lieux sur une carte, rien de tel que d'utiliser les coordonnées géographique : la latitude et la longitude ! Par exemple, la Zone 51 se trouve prêt de Coyote Springs, située aux coordonnées 36.81783500071307, -114.93324954942855.
+Dans ce chapitre, nous allons voir comment ajouter une carte sur le site, permettant de localiser les annonces. Pour localiser des lieux sur une carte, rien de tel que d'utiliser les coordonnées géographiques : la latitude et la longitude ! Par exemple, la Zone 51 se trouve prêt de Coyote Springs, située aux coordonnées 36.81783500071307, -114.93324954942855.
 
-- La première étape consistera à ajouter à la classe annonce les champs permettant stocker les coordonnées géographique
+- La première étape consistera à ajouter à la classe annonce les champs permettant stocker les coordonnées géographiques
 
-- Ensuite, lors de la création d'uns annonce, nous allons interroger l'[API Adresse (Base Adresse Nationale - BAN) - api.gouv.fr](https://api.gouv.fr/les-api/base-adresse-nationale) qui nous permettra de récupérer les coordonnées géographique à partir d'un adresse.
+- Ensuite, lors de la création d'une annonce, nous allons interroger l'[API Adresse (Base Adresse Nationale - BAN) - api.gouv.fr](https://api.gouv.fr/les-api/base-adresse-nationale) qui nous permettra de récupérer les coordonnées géographiques à partir d'une adresse.
 
 - Enfin nous utiliserons la librairie [Leaflet](https://leafletjs.com/) pour afficher les annonces sur une carte.
 
@@ -16,13 +16,13 @@ Dans ce chapitre, nous allons voir comment ajouter une carte sur le site, permet
 
 D'abord, posons la question : quel type de champs pour stocker la latitude et la longitude ? Pour cela, analysons une latitude et une longitude.
 
-- Latitude : __36.81783500071307__. Valeur comprise entre -90 et +90 degrés, 2 chiffres avant la virgule. 6 chiffres après la virgules permettent une précision au mètre prêt. Nous avons donc 8 chiffres au total;
+- Latitude : __36.81783500071307__. Valeur comprise entre -90 et +90 degrés, 2 chiffres avant la virgule. 6 chiffres après la virgule permettent une précision au mètre prêt. Nous avons donc 8 chiffres au total;
 
-- Longitude : __-114.93324954942855__. Valeur comprise entre -180 et +180 degrés, 3 chiffres avant la virgule. 6 chiffres après la virgules permettent une précision au mètre prêt. Nous avons donc 9 chiffres au total;
+- Longitude : __-114.93324954942855__. Valeur comprise entre -180 et +180 degrés, 3 chiffres avant la virgule. 6 chiffres après la virgule permettent une précision au mètre prêt. Nous avons donc 9 chiffres au total;
 
 Il va donc falloir créer 2 champs de type *float* avec un *scale* (chiffre après la virgule en MySql) de 6 et une *precision* (nombre total de chiffre) de 8 pour la latitude et de 9 pour la longitude.
 
-C'est partie :
+C'est parti !
 
 ```shell
 php bin/console make:entity Annonce
@@ -144,7 +144,7 @@ private ?string $lat = null;
 private ?string $lng = null;
 ```
 
-Génères la migrations avec `php bin/console m:mi`, vérifies que celle ci est correct et si oui, mets à jour la base de données avec `php bin/console d:m:m`.
+Génères la migration avec `php bin/console m:mi`, vérifies que celle-ci est correct et si oui, mets à jour la base de données avec `php bin/console d:m:m`.
 
 Tu peux ajouter les champs suivants au formulaire de création et d'édition d'une annonce (c'est le fichier __/src/Form/AnnonceType.php__ pour rappel) :
 
@@ -157,9 +157,21 @@ Tu peux ajouter les champs suivants au formulaire de création et d'édition d'u
  ->add('lng') // ce champ sera caché
 ```
 
+Tu peux aussi adapter la fixture en conséquence __src/DataFixtures/AnnonceFixtures.php__ :
+
+```php
+$annonce
+    ->setLat($faker->latitude)
+    ->setLng($faker->longitude)
+    ->setStreet($faker->streetAddress)
+    ->setCity($faker->city)
+    ->setPostcode($faker->postcode)
+;
+```
+
 ## API Adresse
 
-L'idée est que quand un utilisateur tape une adresse dans le champ si bien nommé _address_, une liste d'adresse apparaîtra sous ce champ et il pourra choisir l'adresse qui lui convient. Lorsqu'il cliquera sur un élément de la liste, le système complétera les champs _street_, _postcode_, _city_, _lat_, et _lng_. Quand il soumettre le formulaire, nous aurons toutes les coordonnées qui s'enregistreront en base de données !
+L'idée est que quand un utilisateur tape une adresse dans le champ si bien nommé _address_, une liste d'adresse apparaîtra sous ce champ et il pourra choisir l'adresse qui lui convient. Lorsqu'il cliquera sur un élément de la liste, le système complétera les champs _street_, _postcode_, _city_, _lat_, et _lng_. Quand il soumettra le formulaire, nous aurons toutes les coordonnées qui s'enregistreront en base de données !
 
 ### Comment fonctionne l'API Adresse ?
 
@@ -173,7 +185,7 @@ Que peut-on retenir ?
 
 - La ressource pour rechercher une adresse est `/search/`
 
-- Le paramètre de recherche est définit grâce à `?q=` et la recherche doit ressembler à ceci `8+bd+du+port`
+- Le paramètre de recherche est défini grâce à `?q=` et la recherche doit ressembler à ceci `8+bd+du+port`
 
 - Il est possible d'ajouter d'autres paramètres tels que
   
@@ -183,7 +195,7 @@ Que peut-on retenir ?
   
   - la latitude et la longitude avec `&lat=48.789&lon=2.789`
   
-  - l'auto-complétion avec `&autocomplete=0`
+  - l'autocomplétion avec `&autocomplete=0`
   
   - et la limite avec `&autocomplete=0`
 
@@ -197,9 +209,9 @@ La réponse de l'API sera au format JSON respectant la spec [GeoCodeJSON](https:
 
 ### JavaScript pour appeler l'API
 
-Dès qu'un utilisateur tape une adresse dans le champ adresse, nous allons faire un appel à l'API avec les informations renseignées par l'utilisateur. Tous va se passer côté navigateur, il nous donc utiliser JavaScript.
+Dès qu'un utilisateur tape une adresse dans le champ adresse, nous allons faire un appel à l'API avec les informations renseignées par l'utilisateur. Tous va se passer côté navigateur, il nous faut donc utiliser JavaScript.
 
-Vu que nous n'aurons besoin de cette fonctionnalité d'auto-complétion seulement sur certaines pages de l'application, notamment dans l'ajout et l'édition d'une annonce, nous n'allons charger les fichiers JavaScript nécessaire seulement sur les pages concernées. Pour cela, il faut ajouter un nouveau point d'entrée.
+Vu que nous n'aurons besoin de cette fonctionnalité d'autocomplétion seulement sur certaines pages de l'application, notamment dans l'ajout et l'édition d'une annonce, nous n'allons charger les fichiers JavaScript nécessaire uniquement sur les pages concernées. Pour cela, il faut ajouter un nouveau point d'entrée.
 
 Crées deux fichiers :
 
@@ -240,19 +252,19 @@ Tu peux lancer la commande `npm run watch` et laisser le terminal ouvert. Les fi
 
 Je te laisse essayer de récupérer les coordonnées géographiques à partir de l'adresse renseignée par l'utilisateur.
 
-![](\\wsl.localhost\Ubuntu\home\vodoo\devenv\cours-symfo-v2\autocomplete.gif)
+![autocomplete](./autocomplete.gif)
 
  Pour ce faire, voici les étapes à suivre et ce dont tu auras besoin :
 
 - Sélectionner le champ (input) permettant de renseigner l'adresse avec [document.querySelector - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Document/querySelector);
 
-- écouter l'événement `keyup` de cet élément, si bien que lorsque que l'utilisateur tape une lettre, une action sera exécuté (un `console.log` par exemple)[EventTarget.addEventListener() - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/EventTarget/addEventListener);
+- écouter l'événement `keyup` de cet élément, si bien que lorsque que l'utilisateur tape une lettre, une action sera exécutée (un `console.log` par exemple)[EventTarget.addEventListener() - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/EventTarget/addEventListener);
 
-- lorsque que l'utilisateur tape une lettre, envoyer une requête GET grâce à [Fetch - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Fetch_API/Using_Fetch). N'hésites pas à faire un `console.log` du résultat pour voir comment parcourir l'objet reçu;
+- lorsque que l'utilisateur tape une lettre, envoyer une requête GET grâce à [Fetch - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Fetch_API/Using_Fetch). N'hésite pas à faire un `console.log` du résultat pour voir comment parcourir l'objet reçu;
 
-- lorsque l'API répond, construire une liste de `li` avec les données des adresses récupérés avec [document.createElement - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Document/createElement) et afficher cette liste sous le champ de recherche avec [Element.after() - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/after);
+- lorsque l'API répond, construire une liste de `li` avec les données des adresses récupérées avec [document.createElement - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Document/createElement) et afficher cette liste sous le champ de recherche avec [Element.after() - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/after);
 
-- sur chaque `li`, écouter l'événement `click` si bien que lorsque l'utilisateur clique sur un élément `li`, les champs rue, code postale, ville, latitude et longitude soient remplie avec les données de l'adresse sélectionnée.
+- sur chaque `li`, écouter l'événement `click` si bien que lorsque l'utilisateur clique sur un élément `li`, les champs rue, code postal, ville, latitude et longitude soient remplie avec les données de l'adresse sélectionnée.
 
 ![](https://static.wikia.nocookie.net/spongebob/images/8/86/Just_in_Time_for_Christmas_154.png/revision/latest?cb=20211205013207)
 
@@ -334,3 +346,112 @@ autoCompleteAddress('#annonce_address', address => {
     document.querySelector('#annonce_lng').value = address.geometry.coordinates[0]
 })
 ```
+
+## Afficher une carte dans le détail d'une annonce
+
+Comme je le disais, nous allons utiliser la librairie [Leaflet](https://leafletjs.com/) pour afficher une carte permettant de localiser l'annonce. La carte sera positionner à droite, sous le prix.  
+
+![caret](./carte.jpg)
+
+La première chose à faire est donc d'installer la librairie (décrit dans la documentation [Download - Leaflet - a JavaScript library for interactive maps](https://leafletjs.com/download.html)) : 
+
+```shell
+npm install leaflet
+```
+
+Comme avant, tu peux créer un nouveau fichier **assets/showAnnonce.js**. Ce fichier ne sera appelé que sur la page de détail d'une annonce. Tu peux y mettre ce contenue: 
+
+```javascript
+import L from 'leaflet'
+import '../../node_modules/leaflet/dist/leaflet.css'
+console.log(L)
+```
+
+Et ajouter une entrée à __webpack.config.js__
+
+```javascript
+.addEntry('showAnnonce', './assets/showAnnonce.js')
+```
+
+Il faut aussi lier les fichiers compilés à l'application. Pour cela, édite le fichier __templates/annonce/show.html.twig__ :
+
+```twig
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('showAnnonce') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('showAnnonce') }}
+{% endblock %}
+```
+
+En allant sur la page de détail d'une annonce, tu devrais voir l'objet Leaflet en console.
+
+### Exercice
+
+Essaie d'afficher une carte avec un marqueur aux coordonnées de l'annonce. Tu peux suivre ces étapes :
+
+- Pour accéder aux coordonnées de l'annonce depuis JavaScript, tu peux procéder de différentes manières, mais la façon la plus simple est de stocker les coordonnées dans l'attribut data d'un élément HTML, et ainsi le récupérer grâce à l'attribut `dataset`. Exemple:
+  
+  ```twig
+  <div id="map" data-lat="{{ annonce.lat }}" data-lng="{{ annonce.lng }}" style="height: 500px"></div>
+  ```
+  
+  ```javascript
+  const mapElement = document.querySelector('#map')
+  const lat = mapElement.dataset.lat
+  const lng = mapElement.dataset.lng
+  ```
+
+- pour afficher une carte avec Leaflet, tu peux suivre le [Quick Start Guide](https://leafletjs.com/examples/quick-start/). Leaflet utilise des tiles (des petites images, des tuiles) pour afficher la carte. Dans l'exemple du guide, on utilise `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. Ce sont les tiles d'[OpenStreetMap](https://www.openstreetmap.org/#map=6/46.449/2.210).
+
+- dès qu'il faut renseigner des coordonnées, Leaflet prend en paramètre un tableau contenant la latitude et la longitude, dans cet ordre. Par exemple : `center: [lat, lng]`
+
+Je te laisse essayer 🙊
+
+![](https://static.wikia.nocookie.net/spongebob/images/0/0a/Can_You_Spare_a_Dime_125.png/revision/latest?cb=20191123012642)
+
+#### Correction
+
+Voici une proposition de correction. 
+
+Dans __templates/annonce/show.html.twig__ :
+
+```twig
+<div id="map" data-lat="{{ annonce.lat }}" data-lng="{{ annonce.lng }}" style="height: 500px"></div>
+```
+
+Dans __assets/entries/showAnnonce.js__ :
+
+```javascript
+import L from 'leaflet'
+import '../../node_modules/leaflet/dist/leaflet.css'
+import markerImg from '../img/map-marker.png'
+
+const mapElement = document.querySelector('#map')
+const lat = mapElement.dataset.lat
+const lng = mapElement.dataset.lng
+
+const map = L.map('map', {
+    center: [lat, lng],
+    zoom: 10
+})
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map)
+
+L.marker([lat, lng], {
+    icon: L.icon({
+        iconUrl: markerImg, // image personnalisée
+        iconSize: [30, 30]
+    })
+}).addTo(map)
+```
+
+J'ai ajouté une image pour avoir un marqueur personnalisé avec `import markerImg from '../img/map-marker.png'`.
+
+Tu peux aller voir sur la page de détail d'une annonce pour voir le résultat !

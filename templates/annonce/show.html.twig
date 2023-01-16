@@ -33,6 +33,7 @@
                         <button class="btn btn-lg btn-block btn-outline-primary" type="button">Contacter le vendeur</button>
                     </div>
                 </div>
+                <div id="map" data-lat="{{ annonce.lat }}" data-lng="{{ annonce.lng }}" style="height: 500px"></div>
             </div>
         </div>
     </div>
@@ -45,3 +46,15 @@
         </div>
     </div>
 {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('showAnnonce') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('showAnnonce') }}
+{% endblock %}
+
+

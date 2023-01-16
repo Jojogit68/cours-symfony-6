@@ -36,6 +36,11 @@ class AnnonceFixtures extends Fixture implements DependentFixtureInterface
                 ->setStatus($faker->numberBetween(0, 4))
                 ->setIsSold(false)
                 ->setUser($user)
+                ->setLat($faker->latitude)
+                ->setLng($faker->longitude)
+                ->setStreet($faker->streetAddress)
+                ->setCity($faker->city)
+                ->setPostcode($faker->postcode)
             ;
             $manager->persist($annonce);
         }
