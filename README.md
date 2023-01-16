@@ -206,13 +206,17 @@ Crées deux fichiers :
 - un fichier __assets/js/autoCompleteAddress.js__ avec le contenu
   
   ```javascript
-  console.log('autoCompleteAddress OK')
+  const autoCompleteAddress = () => {
+      console.log('autoCompleteAddress OK')
+  }
+  
+  export default autoCompleteAddress
   ```
 
 - et un fichier __assets/formAnnonce.js__ avec le contenu 
   
   ```javascript
-  import './js/autoCompleteAddress'
+  import autoCompleteAddress from "./js/autoCompleteAddress"
   ```
 
 Puis ajoutes une nouvelle entrée dans la configuration de Webpack (c'est le fichier __webpack.config.js__ pour rappel)
@@ -234,13 +238,17 @@ Tu peux lancer la commande `npm run watch` et laisser le terminal ouvert. Les fi
 
 #### Exercice
 
-Je te laisse essayer de récupérer les coordonnées géographiques à partir de l'adresse renseignée par l'utilisateur. Pour ce faire, voici les étapes à suivre et ce dont tu auras besoin :
+Je te laisse essayer de récupérer les coordonnées géographiques à partir de l'adresse renseignée par l'utilisateur.
+
+![](\\wsl.localhost\Ubuntu\home\vodoo\devenv\cours-symfo-v2\autocomplete.gif)
+
+ Pour ce faire, voici les étapes à suivre et ce dont tu auras besoin :
 
 - Sélectionner le champ (input) permettant de renseigner l'adresse avec [document.querySelector - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Document/querySelector);
 
 - écouter l'événement `keyup` de cet élément, si bien que lorsque que l'utilisateur tape une lettre, une action sera exécuté (un `console.log` par exemple)[EventTarget.addEventListener() - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/EventTarget/addEventListener);
 
-- lorsque que l'utilisateur tape une lettre, envoyer une requête GET grâce à [Fetch - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Fetch_API/Using_Fetch). N'hésite pas à faire un `console.log` du résultat pour voir comment parcourir l'objet reçu;
+- lorsque que l'utilisateur tape une lettre, envoyer une requête GET grâce à [Fetch - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Fetch_API/Using_Fetch). N'hésites pas à faire un `console.log` du résultat pour voir comment parcourir l'objet reçu;
 
 - lorsque l'API répond, construire une liste de `li` avec les données des adresses récupérés avec [document.createElement - Référence Web API | MDN](https://developer.mozilla.org/fr/docs/Web/API/Document/createElement) et afficher cette liste sous le champ de recherche avec [Element.after() - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/after);
 
@@ -257,7 +265,7 @@ Dans le fichier __assets/js/autoCompleteAddress.js__ :
 ```javascript
 const endpoint = new URL('https://api-adresse.data.gouv.fr/search/')
 
-export const searchAddresses = (fieldSelector, onChoose) => {
+const autoCompleteAddress = (fieldSelector, onChoose) => {
     const searchElement = document.querySelector(fieldSelector)
     const resultContainer = createResultContainer()
     searchElement.after(resultContainer)
@@ -309,13 +317,16 @@ const createResultContainer = () => {
     resultContainer.style.position = 'absolute'
     return resultContainer
 }
+
+export default autoCompleteAddress
 ```
 
 Puis dans le fichier __assets/formAnnonce.js__ :
 
 ```javascript
-import {searchAddresses} from "./js/autoCompleteAddress";
-searchAddresses('#annonce_address', address => {
+import autoCompleteAddress from "./js/autoCompleteAddress"
+
+autoCompleteAddress('#annonce_address', address => {
     document.querySelector('#annonce_street').value = address.properties.name
     document.querySelector('#annonce_postcode').value = address.properties.postcode
     document.querySelector('#annonce_city').value = address.properties.city

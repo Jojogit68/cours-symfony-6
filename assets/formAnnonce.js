@@ -1,5 +1,6 @@
-import {searchAddresses} from "./js/autoCompleteAddress";
-searchAddresses('#annonce_address', address => {
+import autoCompleteAddress from "./js/autoCompleteAddress"
+
+autoCompleteAddress('#annonce_address', address => {
     document.querySelector('#annonce_street').value = address.properties.name
     document.querySelector('#annonce_postcode').value = address.properties.postcode
     document.querySelector('#annonce_city').value = address.properties.city

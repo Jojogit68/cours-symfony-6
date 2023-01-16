@@ -1,6 +1,6 @@
 const endpoint = new URL('https://api-adresse.data.gouv.fr/search/')
 
-export const searchAddresses = (fieldSelector, onChoose) => {
+const autoCompleteAddress = (fieldSelector, onChoose) => {
     const searchElement = document.querySelector(fieldSelector)
     const resultContainer = createResultContainer()
     searchElement.after(resultContainer)
@@ -53,3 +53,4 @@ const createResultContainer = () => {
     return resultContainer
 }
 
+export default autoCompleteAddress
