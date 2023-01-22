@@ -50,7 +50,7 @@ class AnnonceRepository extends ServiceEntityRepository
         return $this->findNotSoldQuery()
             ->getQuery()
             ->getResult()
-            ;
+        ;
     }
 
     /**
@@ -125,6 +125,17 @@ class AnnonceRepository extends ServiceEntityRepository
         }
 
         return $query->getQuery();
+    }
+
+    public function findByDistance(float $lat, float $lng, int $distance): array
+    {
+        $haversineFormula = '(6378 * acos(cos(radians(' . $lat . ')) * cos(radians(a.lat)) * cos(radians(a.lng) - radians(' . $lng . ')) + sin(radians(' .$lat . ')) * sin(radians(a.lat))))';
+        return $this->createQueryBuilder('a')
+            ->andWhere($haversineFormula . ' <= :distance')
+            ->andWhere('a.isSold = false')
+            ->setParameter('distance', $distance)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

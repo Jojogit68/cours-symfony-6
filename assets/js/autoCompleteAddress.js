@@ -50,6 +50,8 @@ const createResultContainer = () => {
     const resultContainer = document.createElement('ul')
     resultContainer.classList.add('list-group')
     resultContainer.style.position = 'absolute'
+    resultContainer.style.zIndex = '999'
+    resultContainer.style.top = '40px'
     return resultContainer
 }
 

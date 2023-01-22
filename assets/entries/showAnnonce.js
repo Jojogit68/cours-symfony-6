@@ -1,6 +1,6 @@
 import L from 'leaflet'
 import '../../node_modules/leaflet/dist/leaflet.css'
-import markerImg from '../img/map-marker.png'
+import mapWorldIcon from '../img/map-world-icon.png'
 
 const mapElement = document.querySelector('#map')
 const lat = mapElement.dataset.lat
@@ -18,7 +18,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 L.marker([lat, lng], {
     icon: L.icon({
-        iconUrl: markerImg,
-        iconSize: [30, 30]
+        iconUrl: mapWorldIcon,
+        iconSize: [50, 50]
     })
 }).addTo(map)

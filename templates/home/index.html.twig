@@ -20,4 +20,47 @@
             {% endfor %}
         </div>
     </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Rechercher des annonces sur la carte</h2>
+            </div>
+            <div class="col-md-12">
+                <div class="input-group my-3">
+                    <span class="input-group-text bg-secondary" id="searchAddressLabel">Chercher une adresse</span>
+                    <input type="text" class="form-control" id="searchAddress" aria-describedby="searchAddressLabel">
+                    <button id="localizeMe" class="btn btn-primary">Ou localisez moi</button>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="input-group my-3">
+                    <span class="input-group-text bg-secondary" id="userLatitudeLabel">Latitude</span>
+                    <input disabled type="text" class="form-control" id="userLatitude" aria-describedby="userLatitudeLabel">
+                    <span class="input-group-text bg-secondary" id="userLongitudeLabel">Longitude</span>
+                    <input disabled type="text" class="form-control" id="userLongitude" aria-describedby="userLongitudeLabel">
+                    <span class="input-group-text" id="userDistanceLabel">Avec une distance de</span>
+                    <input class="form-control" type="number" id="userDistance" aria-describedby="userDistanceLabel">
+                    <span class="input-group-text">km</span>
+                    <button class="btn btn-primary input-group-text" id="searchOnMap">Rechercher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid my-3">
+        <div id="map" style="height: 1000px;"></div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home') }}
+    <script>
+        const route = "{{ url('app_ajax_annonce_index')|escape('js') }}";
+    </script>
 {% endblock %}

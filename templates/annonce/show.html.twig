@@ -14,7 +14,7 @@
                     </div>
                     <div class="card-body">
                         <p class="h1 card-title pricing-card-title">
-                            {{ annonce.price }} €
+                            {{ annonce.price / 100 }} €
                         </p>
 
                         <p>
@@ -35,6 +35,7 @@
                 </div>
                 <div id="map" data-lat="{{ annonce.lat }}" data-lng="{{ annonce.lng }}" style="height: 500px"></div>
             </div>
+        </div>
         </div>
     </div>
     <div class="container">

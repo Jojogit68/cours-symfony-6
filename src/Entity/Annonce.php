@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AnnonceRepository::class), ORM\HasLifecycleCallbacks]
@@ -38,10 +39,12 @@ class Annonce
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('annonce')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 10)]
+    #[Groups('annonce')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -51,9 +54,11 @@ class Annonce
         minMessage: "La description doit faire plus de {{ limit }} caractères",
         maxMessage: "La description doit faire moins de {{ limit }} caractères",
     )]
+    #[Groups('annonce')]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups('annonce')]
     private ?int $price = null;
 
     #[ORM\Column]
@@ -64,50 +69,63 @@ class Annonce
         self::STATUS_VERY_GOOD,
         self::STATUS_PERFECT
     ])]
+    #[Groups('annonce')]
     private ?int $status = null;
 
     #[ORM\Column(options: ['default' => false])]
     #[Assert\Type('bool')]
+    #[Groups('annonce')]
     private ?bool $isSold = false;
 
     #[ORM\Column]
+    #[Groups('annonce')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Regex('/[a-z0-9\-]*/')]
+    #[Groups('annonce')]
     private ?string $slug = null;
 
     #[ORM\Column(options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
+    #[Groups('annonce')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Url(
         protocols: ['https'],
     )]
+    #[Groups('annonce')]
     private ?string $imageUrl = null;
 
     #[ORM\ManyToOne(inversedBy: 'annonces')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('user_detail')]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'annonces')]
+    #[Groups('tag_detail')]
     private Collection $tags;
 
     #[ORM\Column(length: 255)]
+    #[Groups('annonce')]
     private ?string $street = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('annonce')]
     private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('annonce')]
     private ?string $city = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 4)]
+    #[Groups('annonce')]
     private ?string $lat = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 4)]
+    #[Groups('annonce')]
     private ?string $lng = null;
 
     public function __construct()
