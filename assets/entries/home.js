@@ -6,6 +6,8 @@ import autoCompleteAddress from "../js/autoCompleteAddress";
 
 const annonceMarkers = []
 const positionMarkers = []
+const circleLayer = []
+
 const url = new URL(route)
 
 const map = L.map('map', {
@@ -152,9 +154,15 @@ autoCompleteAddress('#searchAddress', address => {
 })
 
 document.querySelector('#searchOnMap').addEventListener('click', () => {
-    getAnnonces(
-        document.querySelector('#userLatitude').value,
-        document.querySelector('#userLongitude').value,
-        document.querySelector('#userDistance').value
-    )
+    const lat = document.querySelector('#userLatitude').value
+    const lng = document.querySelector('#userLongitude').value
+    const radius = parseInt(document.querySelector('#userDistance').value)
+
+    getAnnonces(lat, lng, radius)
+})
+
+document.querySelector('#userDistance').addEventListener('change', e => {
+    if (e.target.value.length < 1) {
+        e.target.value = 100
+    }
 })

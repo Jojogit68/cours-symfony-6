@@ -1220,4 +1220,278 @@ const centerMap = (latitude, longitude, popupText) => {
 Voilà, les marker se suppriment à chaque recherche et à chaque changement de localisation.
 
 ## Utiliser le Serializer de Symfony 
-En cours de rédaction
+Tu te souviens que dans __src/Controller/Ajax/AnnonceController.php__, nous construisons notre propre JSON
+à partir des annonces récupérées depuis la base de données.
+```php
+class AnnonceController extends AbstractController
+{
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(AnnonceRepository $annonceRepository, UrlGeneratorInterface $urlGenerator, Request $request): Response
+    {
+        $lat = (float)$request->query->get('lat');
+        $lng = (float)$request->query->get('lng');
+        $distance = (int)$request->query->get('distance');
+        $annonces = $annonceRepository->findByDistance($lat, $lng, $distance);
+        $data = [];
+
+        foreach ($annonces as $property => $annonce) {
+            $data[] = [
+                'id' => $annonce->getId(),
+                'title' => $annonce->getTitle(),
+                'description' => $annonce->getDescription(),
+                'price' => $annonce->getPrice(),
+                'status' => $annonce->getStatus(),
+                'createdAt' => $annonce->getCreatedAt(),
+                'updatedAt' => $annonce->getCreatedAt(),
+                'slug' => $annonce->getStatus(),
+                'imageUrl' => $annonce->getImageUrl(),
+                'street' => $annonce->getStreet(),
+                'postcode' => $annonce->getPostcode(),
+                'city' => $annonce->getCity(),
+                'lat' => $annonce->getLat(),
+                'lng' => $annonce->getLng(),
+                'link' => $urlGenerator->generate('app_annonce_show', ['id' => $annonce->getId(), 'slug' => $annonce->getSlug()])
+            ];
+
+        }
+        return $this->json($data);
+    }
+}
+```
+Cela fonctionne et c'est une manière simple de renvoyer du JSON depuis un controller. Mais cette manière de faire pose quelques soucis :
+- si nous devons renvoyer des annonces en JSON ailleurs dans notre application, nous devrons faire un copier / coller, et c'est une mauvaise idée ;
+- si nous ajoutons des champs à l'entité, il faudra modifier ce bout de code partout où nous l'avons utilisé ;
+- nous n'avons pas les entités en relations dans notre JSON. Nous pourrions les avoir, mais non sans mal.
+
+Je ne l'ai pas mentionné avant, mais nous aurions pu essayer de faire un simple `json_encode` sur le tableau `$annonces`. 
+Cela pourrait marcher !
+```php
+$annonces = $annonceRepository->findAllNotSold();
+return new Response(json_encode($annonces), 200, [
+    'Content-Type' => 'application/json'
+]);
+```
+Mais voilà, le résultat sera le suivant :
+```json
+[
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {}
+]
+```
+En effet, la fonction `json_encode` va aller chercher seulement les propriétés publiques. Hors, dans l'entité __Annonce__, toutes le propriétés sont privées.
+Nous pourrions donc essayer de changer la visibilité d'une propriété en publique, cela fonctionnerait :
+```php
+// src/Entity/Annonce.php
+class Annonce
+{
+    // ...
+    public ?int $id = null;
+    // ...
+}
+```
+Le résultat serait le suivant :
+```json
+[
+  {
+    "id": 6003
+  },
+  {
+    "id": 6004
+  },
+  {
+    "id": 6005
+  },
+  {
+    "id": 6006
+  },
+  {
+    "id": 6007
+  },
+  {
+    "id": 6008
+  },
+  {
+    "id": 6009
+  },
+  {
+    "id": 6010
+  },
+  {
+    "id": 6011
+  },
+  {
+    "id": 6012
+  },
+  {
+    "id": 6013
+  },
+  {
+    "id": 6014
+  }
+]
+```
+Mais ça se corse si on veut l'utilisateur lié à l'annonce :
+```php
+// src/Entity/Annonce.php
+class Annonce
+{
+    // ...
+    public  ?User $user = null;
+    // ...
+}
+```
+```json
+[
+  {
+    "id": 6003,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6004,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6005,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6006,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6007,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6008,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6009,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6010,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6011,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  },
+  {
+    "id": 6012,
+    "user": {
+      "__initializer__": {},
+      "__cloner__": {},
+      "__isInitialized__": false
+    }
+  }
+]
+```
+
+Bon ça se complique... il faudrait mettre toutes les propriétés en `public` et en faisant cela, 
+on casse le __principe de l'encapsulation__, qui empêche de mettre n'importe quoi dans une propriété.
+
+On a tout faux là ! Tu connais la théorie du chaos ?  
+![chaos](https://media.giphy.com/media/oFpAvbDkk5jEI/giphy.gif)
+
+Pour résoudre ces soucis, nous avons quelques pistes, et comme tu peux le voir sur ces 
+[différents](https://stackoverflow.com/questions/6836592/serializing-php-object-to-json) 
+[threads](https://stackoverflow.com/questions/9896254/php-class-instance-to-json) sur 
+[Stackoverflow](https://stackoverflow.com/questions/27350473/how-to-convert-this-php-array-of-objects-to-json)
+certains ont déjà débattu de la question.
+
+Certaines des solutions présentées dans les threads sont viables, mais pas de débat pour nous ! Les contributeurs de Symfony
+ont créé un composant qui est capable de transformer presque n'importe quel objet en presque n'importe quel format !
+En JSON, en XML, en CSV... et inversement ! Il fait le café quoi.
+
+![coffee](https://media.giphy.com/media/LG1ZZP1Go0D8j7YsWy/giphy.gif)  
+
+Pas comme lui ! 
+
+Ce composant c'est __[The Serializer Component](https://symfony.com/doc/current/components/serializer.html)__.  
+![Superman](https://media.giphy.com/media/FiBzv5FRE85PO/giphy.gif).
+
+Je te laisse parcourir quelques minutes la documentation. Elle est assez complexe j'en conviens. 
+Mais c'est normal pour une fonctionnalité aussi complexe 😆.
+
+### Que fait le Serializer ?
+Comme je te le disais, le __Serializer__ de Symfony nous permet de transformer un objet PHP, en différents formats (JSON, XML, YAML,...)
+et l'inverse, c'est à dire de transformer un format JSON, XML, YAML, en objet PHP.
+
+Ce schéma décrit bien son fonctionnement :
+
+![](./serializer_workflow.svg)
+
+Pour le comprendre, définissons les étapes avec des mots simples :
+- la __serialization__ : le composant transforme un objet PHP vers le format choisit. Cette étape comporte plusieurs sous étapes :
+  - la __normalization__ : le composant va transformer un objet PHP en tableau, un type tout simple et facilement manipulable par PHP, un type normal quoi, une norme ;
+  - l'__encodage__ : le composant encode le tableau dans le format choisit ;
+- la __deserialization__: le composant transforme le format choisit en objet PHP :
+  - le __decodage__ : le composant decode le format pour le transformer en tableau PHP ;
+  - la __dernomalization__ : le composant transforme le tableau en objet PHP ;
+
+Garde cette image sous le coude quand tu utilises le __Serializer__, les concepts ne sont pas simples à retenir, alors autant avoir un petit dessin à côté.
+
+
+https://symfony.com/doc/current/serializer.html
+https://symfony.com/doc/current/serializer/custom_normalizer.html
