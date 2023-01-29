@@ -39,12 +39,12 @@ class Annonce
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 10)]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -54,11 +54,11 @@ class Annonce
         minMessage: "La description doit faire plus de {{ limit }} caractères",
         maxMessage: "La description doit faire moins de {{ limit }} caractères",
     )]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?int $price = null;
 
     #[ORM\Column]
@@ -69,63 +69,63 @@ class Annonce
         self::STATUS_VERY_GOOD,
         self::STATUS_PERFECT
     ])]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?int $status = null;
 
     #[ORM\Column(options: ['default' => false])]
     #[Assert\Type('bool')]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?bool $isSold = false;
 
     #[ORM\Column]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Regex('/[a-z0-9\-]*/')]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $slug = null;
 
     #[ORM\Column(options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Url(
         protocols: ['https'],
     )]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $imageUrl = null;
 
     #[ORM\ManyToOne(inversedBy: 'annonces')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('user_detail')]
+    #[Groups('annonce:user')]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'annonces')]
-    #[Groups('tag_detail')]
+    #[Groups('annonce:tag')]
     private Collection $tags;
 
     #[ORM\Column(length: 255)]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $street = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $city = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 4)]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $lat = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 4)]
-    #[Groups('annonce')]
+    #[Groups('annonce:read')]
     private ?string $lng = null;
 
     public function __construct()

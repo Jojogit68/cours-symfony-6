@@ -1474,6 +1474,8 @@ Ce composant c'est __[The Serializer Component](https://symfony.com/doc/current/
 Je te laisse parcourir quelques minutes la documentation. Elle est assez complexe j'en conviens. 
 Mais c'est normal pour une fonctionnalité aussi complexe 😆.
 
+Tu peux aussi regarder cette excellente conférence : [Maîtriser le composant Serializer de Symfony - Kévin Dunglas - PHP Tour Montpellier 2018](https://www.youtube.com/watch?v=mbXhQkKg7HE).
+
 ### Que fait le Serializer ?
 Comme je te le disais, le __Serializer__ de Symfony nous permet de transformer un objet PHP, en différents formats (JSON, XML, YAML,...)
 et l'inverse, c'est à dire de transformer un format JSON, XML, YAML, en objet PHP.
@@ -1486,12 +1488,395 @@ Pour le comprendre, définissons les étapes avec des mots simples :
 - la __serialization__ : le composant transforme un objet PHP vers le format choisit. Cette étape comporte plusieurs sous étapes :
   - la __normalization__ : le composant va transformer un objet PHP en tableau, un type tout simple et facilement manipulable par PHP, un type normal quoi, une norme ;
   - l'__encodage__ : le composant encode le tableau dans le format choisit ;
-- la __deserialization__: le composant transforme le format choisit en objet PHP :
+- la __deserialization__ : le composant transforme le format choisit en objet PHP. Cette étape comporte plusieurs sous étapes :
   - le __decodage__ : le composant decode le format pour le transformer en tableau PHP ;
   - la __dernomalization__ : le composant transforme le tableau en objet PHP ;
 
 Garde cette image sous le coude quand tu utilises le __Serializer__, les concepts ne sont pas simples à retenir, alors autant avoir un petit dessin à côté.
 
+Pour utiliser le __Serializer__, voici ce qu'il faudrait faire :
+```php
+$encoders = [new XmlEncoder(), new JsonEncoder()]; // instancier les encoders que nous souhaitons utiliser
+$normalizers = [new ObjectNormalizer()]; // instancier les normalizers que nous souhaitons utiliser
+$serializer = new Serializer($normalizers, $encoders); // instancier le Serializer avec les normalizer et les encoders
+```
 
-https://symfony.com/doc/current/serializer.html
-https://symfony.com/doc/current/serializer/custom_normalizer.html
+Il y a plusieurs __normalize__ et plusieurs __encoders__ disponible, comme indiqué dans la [documentation](https://symfony.com/doc/current/serializer.html#adding-normalizers-and-encoders).
+On instanciera ceux qui nous sont utiles. Par exemple si je veux __normalizer__ un objet avec des champs __DateTime__, il faudra que 
+j'instancie le __Serializer__ de cette façon :
+```php
+$encoders = [new XmlEncoder(), new JsonEncoder()]; // instancier les encoders que nous souhaitons utiliser
+$normalizers = [new DateTimeNormalizer(), new ObjectNormalizer()]; // instancier les normalizers que nous souhaitons utiliser. Le Serializer les utilisera par priorité : s'il croise un DateTime, il utilisera DateTimeNormalizer, sinon il utilisera ObjectNormalizer
+$serializer = new Serializer($normalizers, $encoders); // instancier le Serializer avec les normalizer et les encoders
+```
+
+Ensuite pour transformer un objet avec le __Serializer__, c'est tout simple :
+```php
+$arrayContent = $serializer->normalize($annonce); // transformation en tableau
+$jsonContent = $serializer->serialize($annonce, 'json'); // transformation en JSON
+```
+
+### Utilisation
+
+Je te propose d'essayer dans __src/Controller/Ajax/AnnonceController.php__ :
+```php
+// les autres use
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+//...
+
+class AnnonceController extends AbstractController
+{
+    // tu peux remplacer tout le code d'avant par celui-ci
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(AnnonceRepository $annonceRepository): Response
+    { 
+        $annonces = $annonceRepository->findLatestNotSold();
+        dump($annonces);
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers);
+        $annoncesToArray = $serializer->normalize($annonces); // on transforme toutes les instance d'Annonce en tableau
+        dump($annoncesToArray);
+        die;
+    }
+}
+```
+Recharge la page __/ajax/annonce/__ et contemple cette magnifique erreur 😆
+```
+A circular reference has been detected when serializing the object of class "App\Entity\Annonce" (configured limit: 1).
+```
+Cette erreur s'explique assez simplement :
+- le __Serializer__ boucle sur le tableau des annonces, chaque élément du tableau est une instance de __Annonce__, donc un objet ;
+- à chaque itération, il essaie de transformer l'objet __Annonce__ en tableau
+- l'objet __Annonce__ contient une référence à __Tag__, il boucle alors sur les tags en relation pour les transformer en tableau ;
+- chaque __Tag__ contient une référence à __Annonce__, il boucle alors sur les annonces en relation pour les transformer en tableau ;
+- chaque __Annonce__ contient une référence à __Tag__, il boucle alors sur les tags en relation pour les transformer en tableau ;
+- chaque __Tag__ contient une référence à __Annonce__, il boucle alors sur les annonces en relation pour les transformer en tableau ;
+- chaque __Annonce__ contient une référence à __Tag__, il boucle alors sur les tags en relation pour les transformer en tableau ;
+- chaque __Tag__ contient une référence à __Annonce__, il boucle alors sur les annonces en relation pour les transformer en tableau ;
+- etc.  
+__BOUCLE INFINIE !__  
+![infinite loop](https://media.giphy.com/media/GB3XCL0cnIUxi/giphy.gif)  
+
+En fait le __Serializer__ lève une exception avant d'enter en boucle infinie. Pour régler le problème, nous pouvons choisir les champs à inclure :
+```php
+// les autres use
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+//...
+
+class AnnonceController extends AbstractController
+{
+    // tu peux remplacer tout le code d'avant par celui-ci
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(AnnonceRepository $annonceRepository): Response
+    { 
+        $annonces = $annonceRepository->findLatestNotSold();
+        dump($annonces);
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers);
+        
+        $fieldsToShow = [
+            'id',
+            'title',
+            'description',
+            'price',
+            'status',
+            'createdAt',
+            'updatedAt',
+            'slug',
+            'imageUrl',
+            'street',
+            'postcode',
+            'city',
+            'lat',
+            'lng',
+            'user' => [
+                'id',
+                'email'
+            ],
+            'tag' => [
+                'id',
+                'name'
+            ]
+        ];
+
+        $annoncesToArray = $serializer->normalize($annonces, null, [AbstractNormalizer::ATTRIBUTES => $fieldsToShow]);
+        
+        dump($annoncesToArray);
+        die;
+    }
+}
+```
+En rechargeant la page, tu verras que cela fonctionne !
+
+Mais cette façon de faire n'est pas si différente de ce que nous avions fait précédemment : nous sommes encore obligés de lister les champs qui nous intéresse.
+
+### Les Groupes
+Les [groupes]((https://symfony.com/doc/current/components/serializer.html#attributes-groups)) sont des attributs qui vont nous permettre de choisir les champs dans une entité.
+
+Voici comment les utiliser : dans __src/Entity/Annonce.php__ :
+```php
+// autres use
+use Symfony\Component\Serializer\Annotation\Groups;
+// autres use
+
+//...
+class Annonce
+{
+    //...
+    #[Groups('annonce:read')]
+    private ?int $id = null;
+
+    #[Groups('annonce:read')]
+    private ?string $title = null;
+
+    #[Groups('annonce:read')]
+    private ?string $description = null;
+
+    //... tu peux ajouter le groupe 'annonce:read' aux autres champs sauf :
+
+    #[Groups('annonce:user')]
+    private ?User $user = null;
+
+    #[Groups('annonce:tag')]
+    private Collection $tags;
+    
+    //...
+}
+```
+
+Et dans __src/Controller/Ajax/AnnonceController.php__ :
+```php
+// autre use
+use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+// autre use
+
+#[Route('/ajax')]
+class AnnonceController extends AbstractController
+{
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(
+        AnnonceRepository $annonceRepository,
+    ): Response
+    {
+        $annonces = $annonceRepository->findLatestNotSold();
+        dump($annonces);
+        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader())); // on a besoin de cette instance pour lire les groupes dans l'entité
+        $normalizers = [new ObjectNormalizer($classMetadataFactory)];
+        $serializer = new Serializer($normalizers);
+        $annoncesToArray = $serializer->normalize($annonces, null, ['groups' => 'annonce:read']); // on demande les propriétés du groupe annonce:read 
+        dd($annoncesToArray);
+    }
+}
+```
+
+Recharge la page : notre code est déjà plus concis, c'est un peu mieux !
+
+Pour transformer les Annonces en JSON, rien de plus simple ! 
+
+```php
+$annonces = $annonceRepository->findLatestNotSold();
+$classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+$encoders = [new JsonEncoder()]; // on initialise l'encoder pour transformer les entités en JSON
+$normalizers = [new ObjectNormalizer($classMetadataFactory)];
+$serializer = new Serializer($normalizers, $encoders); // on ajoute l'encoder au Serializer
+$data = $serializer->serialize($annonces, 'json', ['groups' => 'annonce:read']); // et on peut utiliser la fonction serialize
+return new Response($data, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+```
+
+### Injecter le Serializer
+Nous avons un moyen encore plus simple d'utiliser le __Serialize__. Nous pouvons simplement utiliser l'__autowiring__, comme décrit dans la [documentation](https://symfony.com/doc/current/serializer.html). 
+De cette manière, le __Serializer__ sera déjà instancié et configuré par Symfony. Voici comment procéder, dans __src/Controller/Ajax/AnnonceController.php__ :
+
+```php
+// autres use
+use Symfony\Component\Serializer\SerializerInterface;
+// autres use
+//...
+class AnnonceController extends AbstractController
+{
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(
+        AnnonceRepository $annonceRepository,
+        SerializerInterface $serializer
+    ): Response
+    {
+        $annonces = $annonceRepository->findLatestNotSold();
+        $data = $serializer->serialize($annonces, 'json', ['groups' => 'annonce:read']);
+        return new Response($data, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+    }
+}
+```
+Parfait ! Il nous manque juste les liens vers les annonces dans notre réponse. Nous pouvons imaginer écrire ce code :
+```php
+// autres use
+//...
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+// autres use
+class AnnonceController extends AbstractController
+{
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(
+        AnnonceRepository $annonceRepository,
+        UrlGeneratorInterface $urlGenerator,
+        SerializerInterface $serializer
+    ): Response
+    {
+        $annonces = $annonceRepository->findLatestNotSold();
+        $data = [];
+        foreach ($annonces as $key => $annonce) { // on parcourt le tableau annonce
+            $data[] = $serializer->normalize($annonce, null, ['groups' => 'annonce:read']); // on transforme l'annonce en tableau
+            $data[$key]['link'] = $urlGenerator->generate('app_annonce_show', ['id' => $annonce->getId(), 'slug' => $annonce->getSlug()]); // on ajoute l'index link au tableau $data
+        }
+        return new Response(json_encode($data), Response::HTTP_OK, ['Content-Type' => 'application/json']);
+    }
+}
+```
+C'est une solution qui fonctionne ! Mais nous pouvons encore améliorer les choses, afin d'avoir le même résultat, peu importe où nous utilisons le __Serializer__.
+
+### Custom Serializer
+Nous allons créer notre propre logique afin de transformer une annonce. Ainsi, dès que nous utiliserons le __Serializer__ sur une entité Annonce, nous aurons l'index _link_ dans le résultat.
+Tu peux taper la commande suivante :
+```shell
+php bin/console make:serializer:normalizer
+
+Choose a class name for your normalizer (e.g. UserNormalizer):
+ > Annonce
+ 
+  created: src/Serializer/Normalizer/AnnonceNormalizer.php
+
+
+  Success!
+
+
+ Next: Open your new serializer normalizer class and start customizing it.
+ Find the documentation at https://symfony.com/doc/current/serializer/custom_normalizer.html
+```
+
+Tu peux aller voir le fichier __src/Serializer/Normalizer/AnnonceNormalizer.php__ et jeter un oeil à la [documentation.](https://symfony.com/doc/current/serializer/custom_normalizer.html)
+
+Voici à quoi ressemble la classe générée par Symfony :
+```php
+<?php
+
+namespace App\Serializer\Normalizer;
+
+use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
+class AnnonceNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
+{
+    public function __construct(private ObjectNormalizer $normalizer)
+    {
+        // dans le constructeur, on peut injecter les services dont on a besoin
+    }
+
+    public function normalize($object, string $format = null, array $context = []): array
+    {
+        // c'est dans cette fonction que nous écrirons la logique du normalizer
+        // pour transformer une entité en tableau
+        $data = $this->normalizer->normalize($object, $format, $context);
+
+        // TODO: add, edit, or delete some data
+
+        return $data;
+    }
+
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    {
+        // cette fonction permet de lancer notre normalizer seulement pour l'entité Annonce
+        return $data instanceof \App\Entity\Annonce;
+    }
+
+    public function hasCacheableSupportsMethod(): bool
+    {
+        // est-ce que le résultat du normalizer doit être mis en : https://symfony.com/doc/current/serializer/custom_normalizer.html#performance
+        return true;
+    }
+}
+```
+Voici ce que tu peux écrire dans cette classe pour qu'à chaque utilisation du __Serializer__ sur une entité Annonce,
+celui-ci ajoute le lien de l'annonce dans le résultat :
+```php
+<?php
+//...
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+//...
+
+class AnnonceNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
+{
+    public function __construct(private NormalizerInterface $normalizer, private UrlGeneratorInterface $urlGenerator){}
+
+    public function normalize($object, string $format = null, array $context = []): array
+    {
+        $data = $this->normalizer->normalize($object, $format, $context);
+        $data['link'] = $this->urlGenerator->generate('app_annonce_show', ['id' => $object->getId(), 'slug' => $object->getSlug()]);
+
+        return $data;
+    }
+    //...
+}
+```
+Pour que notre normalizer fonctionne correctement, il faut ajouter ces lignes au fichier __config/services.yaml__ :
+```yaml
+services:
+  # reste des services
+  App\Serializer\Normalizer\AnnonceNormalizer:
+    arguments:
+      $normalizer: '@serializer.normalizer.object' # on injecte l'ObjectNormalizer dans l'argument $normalizer
+```
+Puis dans __src/Controller/Ajax/AnnonceController.php__ :
+```php
+//...
+class AnnonceController extends AbstractController
+{
+    //...
+    public function index(
+        AnnonceRepository $annonceRepository,
+        SerializerInterface $serializer
+    ): Response
+    {
+        $annonces = $annonceRepository->findLatestNotSold();
+        $data = $serializer->serialize($annonces, 'json', ['groups' => 'annonce:read']);
+        return new Response($data, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+    }
+}
+```
+Nous aurons le même résultat qu'avant, mais désormais, toutes les annonces que nous voulons __serializer__ contiendront les mêmes informations.
+
+Finalement, voici à quoi devrait ressembler le controller final :
+```php
+<?php
+
+namespace App\Controller\Ajax;
+
+use App\Repository\AnnonceRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/ajax', condition: "request.headers.get('Accept') matches '#application/json#'")] // ce controller n'est accessible pour les requêtes demandant du JSON
+class AnnonceController extends AbstractController
+{
+    #[Route('/annonce', methods: ['GET'])]
+    public function index(
+        AnnonceRepository $annonceRepository,
+        Request $request
+    ): Response
+    {
+        $lat = (float)$request->query->get('lat');
+        $lng = (float)$request->query->get('lng');
+        $distance = (int)$request->query->get('distance');
+        $annonces = $annonceRepository->findByDistance($lat, $lng, $distance);
+        return $this->json($annonces, Response::HTTP_OK, [], ['groups' => 'annonce:read']); // cette fonction appelle automatiquement le serializer !
+    }
+}
+```
+
+Bravo pour avoir suivi jusqu'ici ! Le Serializer est un composant compliqué à utiliser mais très utile ! 
+N'hésite pas à investiguer davantage en lisant la doc de Symfony !
+![bravo](https://media.giphy.com/media/BWJhoWaq5pjRlJqIv7/giphy.gif)
