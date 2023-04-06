@@ -12,8 +12,10 @@ class AnnonceController extends AbstractController
     public function index(): Response
     {
         $user = $this->getUser();
+        dump($this->getUser());
         return $this->render('profile/annonce/index.html.twig', [
-            'annonces' => $user->getAnnonces()
+            'controller_name' => 'AnnonceController',
+            'annonces' => $user->getAnnonces(),
         ]);
     }
 }
