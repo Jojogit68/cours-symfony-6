@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Annonce;
+use App\Entity\AnnonceSearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -81,6 +82,53 @@ class AnnonceRepository extends ServiceEntityRepository
             ->getQuery()
         ;
     }
+
+    public function findByAnnonceSearchQuery(AnnonceSearch $annonceSearch): Query
+{
+    $query = $this->createQueryBuilder('a');
+    if ($annonceSearch->getCreatedAt() !== null) {
+        $query
+            ->andWhere('a.createdAt > :createdAt')
+            ->setParameter(':createdAt', $annonceSearch->getCreatedAt())
+        ;
+    }
+    //...
+    // autres conditions ce qui est contenu dans $annonceSearch
+    //...
+    if ($annonceSearch->getTitle() !== null) {
+        $query
+            ->andWhere('a.title LIKE :title')
+            ->setParameter('title', '%'.$annonceSearch->getTitle().'%')
+        ;
+    }
+
+    if ($annonceSearch->getStatus() !== null) {
+        $query
+            ->andWhere('a.status = :status')
+            ->setParameter('status', $annonceSearch->getStatus())
+        ;
+    }
+
+    if ($annonceSearch->getMaxPrice() !== null) {
+        $query
+            ->andWhere('a.price < :maxPrice')
+            ->setParameter('maxPrice', $annonceSearch->getMaxPrice())
+        ;
+    }
+
+    if ($annonceSearch->getTags()->count() > 0) {
+        $cpt = 0;
+        foreach ($annonceSearch->getTags() as $key => $tag) {
+            $query = $query
+                ->andWhere(':tag'.$cpt.' MEMBER OF a.tags')
+                ->setParameter('tag'.$cpt, $tag);
+            $cpt++;
+        }
+    }
+
+
+    return $query->getQuery(); // on retourne un objet Query car nous voulons utiliser KnpPaginator pour afficher la liste des annonces
+}
 
 //    /**
 //     * @return Annonce[] Returns an array of Annonce objects

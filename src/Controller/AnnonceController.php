@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Annonce;
+use App\Entity\AnnonceSearch;
 use App\Form\AnnonceType;
 use App\Repository\AnnonceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -95,4 +96,18 @@ class AnnonceController extends AbstractController
 
         return $this->redirectToRoute('app_annonce_index');
     }
+
+    /* #[Route('/')]
+    public function recherche(Request $request): Response
+    {
+        $search = new AnnonceSearch();
+        $form = $this->createForm(AnnonceSearchType::class, $search);
+        $form->handleRequest($request);
+        //...
+
+        return $this->render('template.html.twig', [
+            'search' => $form->createView(),
+            //...
+        ]);
+    } */
 }

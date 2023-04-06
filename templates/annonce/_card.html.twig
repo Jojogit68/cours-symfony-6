@@ -15,7 +15,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
                 <a class="btn btn-sm btn-outline-secondary" type="button" href="{{ path('app_annonce_show', {id: annonce.id, slug: annonce.slug}) }}">View</a>
-                {% if is_granted('ROLE_USER') and annonce.user == app.user %}
+                {% if is_granted('ROLE_USER') and annonce.user == app.user or is_granted('ROLE_ADMIN') %}
                     <a class="btn btn-sm btn-outline-secondary" type="button" href="{{ path('app_annonce_edit', {id: annonce.id}) }}">Edit</a>
                     <form method="post" action="{{ path('app_annonce_delete', {id: annonce.id}) }}" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
                         <input type="hidden" name="_method" value="DELETE">

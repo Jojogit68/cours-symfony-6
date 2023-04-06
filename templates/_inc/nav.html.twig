@@ -46,8 +46,16 @@
                 </ul>
 
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                {# <button class="btn btn-outline-success" type="submit">Search</button> #}
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#search" aria-expanded="false" aria-controls="search">
+                    Recherche avancée
+                </button>
             </form>
         </div>
     </div>
 </nav>
+<div class="collapse" id="search">
+<div class="card card-body">
+    {{ render_esi(controller('App\\Controller\\AnnonceSearchController::index')) }}
+</div>
+</div>
