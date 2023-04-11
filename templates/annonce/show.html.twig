@@ -1,5 +1,10 @@
 {% extends '_layout/full-width.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('showAnnonce') }}
+{% endblock %}
+
 {% block title %}#{{ annonce.id }}-{{ annonce.title }}!{% endblock %}
 {% block content %}
     <div class="container">
@@ -42,6 +47,14 @@
                 <h2>Déscription</h2>
                 <p>{{ annonce.description }}</p>
             </div>
+
+            <div id="map" data-lat="{{ annonce.lat }}" data-lng="{{ annonce.lng }}" style="height: 500px"></div>
+            
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('showAnnonce') }}
 {% endblock %}

@@ -36,6 +36,12 @@ class AnnonceFixtures extends Fixture implements DependentFixtureInterface
                 ->setStatus($faker->numberBetween(0, 4))
                 ->setIsSold(false)
                 ->setUser($user)
+                ->setLat($faker->latitude(40, 50)) // la latitude minimum et maximum pour la France (peu ou prou)
+                ->setLng($faker->longitude(-5, 6)) // la longitude minimum et maximum pour la France (peu ou prou)
+                ->setStreet($faker->streetAddress)
+                ->setCity($faker->city)
+                ->setPostcode($faker->postcode)
+                ->setImageUrl($faker->imageUrl) // un petit oubli
             ;
             $manager->persist($annonce);
         }

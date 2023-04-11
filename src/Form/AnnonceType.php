@@ -44,6 +44,12 @@ class AnnonceType extends AbstractType
                 'choice_label' => 'name', // c'est la propriété dans l'entitié Tag qui sera affichée dans le select
                 'multiple' => true
             ])
+            ->add('address', null, ['label' => 'address', 'mapped' => false]) // ce champ permettra de rechercher l'adresse, il n'existe pas dans l'entité, alors il doit comporter l'option mapped => false
+            ->add('street', null, ['label' => 'street'])
+            ->add('postcode', null, ['label' => 'postcode'])
+            ->add('city', null, ['label' => 'city'])
+            ->add('lat') // ce champ sera caché
+            ->add('lng') // ce champ sera caché
         ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

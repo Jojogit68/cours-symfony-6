@@ -3,6 +3,10 @@
 {% block content %}
     <h1>Nouvelle annonce</h1>
     {{ include("annonce/_form.html.twig", {form: formView, button: 'create'|trans}) }}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('formAnnonce') }}
+{% endblock %}
 {% endblock %}
 
 

@@ -6,10 +6,18 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
+import './styles/global.scss';
 
 // start the Stimulus application
 import './bootstrap';
 
 // le bout de code à ajouter
-alert('Webpack fonctionne !')
+// alert('Webpack fonctionne !')
+
+const $ = require('jquery');
+require('bootstrap');
+
+import 'select2';
+$(document).ready(function() { // permet de lancer Select2 sur tous les élements avec la classe 'select2'
+    $('select').select2()
+});

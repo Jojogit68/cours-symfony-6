@@ -1,0 +1,8 @@
+// personnalistaion des variables Bootstrap
+$primary: #A6294B;
+$secondary: #D9AE5F;
+
+// import de la librairie Bootstrap. Le ~ reference le dossier node_modules
+@import "~bootstrap/scss/bootstrap";
+
+@import "~select2/dist/css/select2.css";
